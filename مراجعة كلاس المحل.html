@@ -1461,4 +1461,41 @@ jQuery(document).ready(function($) {
 </script>
 
 
-</body></html>
+
+<div class="dpit-wrap" style="top: 0px; left: 0px; width: 412px; height: 1116px;"></div><div class="dpit-wrap" style="top: 0px; left: 0px; width: 412px; height: 1116px;"></div><script>
+(function() {
+    // دالة لإصلاح روابط إطارات H5P
+    function fixH5PIframeSources() {
+        // التأكد من أن مكتبة H5P وبياناتها موجودة في الصفحة
+        if (typeof H5PIntegration !== 'undefined' && H5PIntegration.contents) {
+            var keys = Object.keys(H5PIntegration.contents);
+            
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i];
+                // استخراج الرقم التعريفي للمحتوى (مثلاً cid-1949 نأخذ منها 1949)
+                var contentId = key.split('-')[1];
+                if (!contentId) continue;
+
+                var contentData = H5PIntegration.contents[key];
+                // البحث عن الإطار (Iframe) المقابل لهذا المحتوى
+                var iframe = document.getElementById('h5p-iframe-' + contentId);
+                
+                // إذا وجدنا الإطار والرابط الخاص به في البيانات
+                if (iframe && contentData && contentData.url) {
+                    // نقوم بتحديث مصدر الإطار ليقرأ من الموقع الأصلي
+                    iframe.src = contentData.url;
+                    iframe.style.display = 'block'; // ضمان ظهوره
+                }
+            }
+        }
+    }
+
+    // تنفيذ الإصلاح عند اكتمال تحميل الصفحة
+    window.addEventListener('load', fixH5PIframeSources);
+    
+    // محاولة تنفيذ إضافية فورية للتأكيد
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(fixH5PIframeSources, 1000);
+    }
+})();
+</script></body></html>
